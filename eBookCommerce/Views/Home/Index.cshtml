@@ -1,0 +1,97 @@
+﻿@model eBookCommerce.Models.eBookCommerceViewModel
+@{
+    ViewBag.Title = "Home";
+}
+
+<style>
+    .card {
+        
+    }
+
+    .card-img {
+        opacity: 0.5;
+    }
+
+    .card-title {
+
+    }
+
+    .card-text {
+
+    }
+</style>
+
+<div class="container">
+    <select class="form-select" name="bookType" id="bookType">
+        @foreach (var genre in Model.genres)
+        {
+            <option value="@genre.genreId">@genre.genreName</option>
+        }
+    </select>
+
+    <div class="row">
+        <div class="col-md-9 mt-5">
+            <div class="card" style="width: 100%; height: 100%">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <img src="@Model.book.bookImageUrl" class="img-fluid rounded" style="object-fit: cover">
+                        <button type="button" class="btn btn-success mt-5" onclick="addToBasket(@Model.book.bookId)">Add to Basket</button>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">@Model.book.bookName</h5>
+                            <p class="card-text">@Model.book.bookDescription</p>
+                            <p class="card-text"><small class="text-muted">@Model.book.bookPrice</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        @foreach (var book in Model.books)
+        {
+            <div class="col-md-3 text-center mt-5">
+                <div class="card" style="width: 100%; height: 100%">
+                    <img src="@book.bookImageUrl" class="card-img-top" style="height: 75%; object-fit: cover">
+                    <div class="card-body" style="height: 25%">
+                        <h5 class="card-title">@book.bookName</h5>
+                        <p class="card-text">@book.bookAuthor</p>
+                        <button type="button" class="btn btn-primary" onclick="seeMore(@book.bookId)">See More</button>
+                        <button type="button" class="btn btn-success" onclick="addToBasket(@book.bookId)">Add to Basket</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+    function seeMore(bookId) {
+        var url = "Book/SingleBook?bookId=" + bookId;
+        window.location = url;
+    }
+
+    function addToBasket(bookId) {
+        var userId = "@Model.user.Id";
+        var url = "Home/AddToBasket?personId=" + userId + "&bookId=" + bookId;
+
+        $.ajax({
+            url: url ,
+            type: "POST",
+            dataType: "json",
+            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+            success: function (result) {
+                console.log(result);
+
+                if (result == true) {
+                    window.location = "Basket";
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+</script>
