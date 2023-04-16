@@ -12,14 +12,14 @@ namespace eBookCommerce.Controllers
     {
         eBookCommerceEntities ebcDB = new eBookCommerceEntities();
 
-        public ActionResult Index()
+        public ActionResult Index(int? page = null)
         {
             if(User.Identity.Name == "")
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            eBookCommerceViewModel viewModel = new eBookCommerceViewModel();
+            eBookCommerceViewModel viewModel = new eBookCommerceViewModel(0, 0, page);
             return View(viewModel);
         }
 

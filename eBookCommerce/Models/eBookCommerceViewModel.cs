@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using X.PagedList;
+using PagedList;
+using PagedList.Mvc;
 
 namespace eBookCommerce.Models
 {
@@ -17,30 +18,22 @@ namespace eBookCommerce.Models
 
         public List<Book> books { get; set; }
 
+        public IPagedList<Book> booksPagedList { get; set; }
+
         public Genre genre { get; set; }
 
         public List<Genre> genres { get; set; }
 
         public List<SelectListItem> genresSelectList { get; set; }
 
-        //public eBookCommerceViewModel()
-        //{
-        //    var ebcDB = new eBookCommerceEntities();
-
-        //    user = ebcDB.AspNetUsers.SingleOrDefault(a => a.Email == HttpContext.Current.User.Identity.Name);            
-
-        //    books = ebcDB.Books.ToList();
-
-        //    book = books[getRandomBookPosition()];
-
-        //    books = ebcDB.Books.Where(a => a.bookId != book.bookId).ToList();
-
-        //    genres = ebcDB.Genres.ToList();
-        //}
-
-        public eBookCommerceViewModel(int bookId = 0, int genreId = 0)
+        public eBookCommerceViewModel()
         {
-            var ebcDB = new eBookCommerceEntities();
+
+        }
+
+        public eBookCommerceViewModel(int bookId = 0, int genreId = 0, int? page = null)
+        {
+            var ebcDB = new eBookCommerceEntities();            
 
             user = ebcDB.AspNetUsers.SingleOrDefault(a => a.Email == HttpContext.Current.User.Identity.Name);
 
@@ -51,12 +44,20 @@ namespace eBookCommerce.Models
                 seller = book.AspNetUser;
 
                 books = ebcDB.Books.Where(a => a.AspNetUser.Id == seller.Id && a.bookId != bookId).ToList();
+
+                booksPagedList = books.ToPagedList(page ?? 1, 5);
             }
             else
             {
                 books = ebcDB.Books.ToList();
+                
+                if(books.Any())
+                    book = books[getRandomBookPosition()];
 
-                book = books[getRandomBookPosition()];                
+                books = books.Where(a => a.bookId != book.bookId).ToList();
+
+                booksPagedList = books.ToPagedList(page ?? 1, 5);
+
             }
 
             genres = ebcDB.Genres.ToList();
@@ -78,6 +79,8 @@ namespace eBookCommerce.Models
             if (genreId != 0)
             {
                 books = books.Where(a => a.genreId == genreId).ToList();
+
+                booksPagedList = books.ToPagedList(page ?? 1, 5);
             }
         }
 

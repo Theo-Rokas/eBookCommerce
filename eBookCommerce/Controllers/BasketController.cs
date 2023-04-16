@@ -10,8 +10,7 @@ namespace eBookCommerce.Controllers
     public class BasketController : Controller
     {
         eBookCommerceEntities ebcDB = new eBookCommerceEntities();
-
-        // GET: Basket
+        
         public ActionResult Index()
         {
             if (User.Identity.Name == "")
@@ -38,7 +37,6 @@ namespace eBookCommerce.Controllers
                     basket.AspNetUser.Email,
                     basket.Book.bookName,
                     "<button type='button' class='btn btn-danger' onclick='removeItemFromBasket(" + basket.basketId + ")'>Remove from Basket</button>"
-                    //removeItemFromBasket
                 });
             }
 

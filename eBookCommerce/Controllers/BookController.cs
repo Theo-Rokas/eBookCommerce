@@ -1,4 +1,5 @@
 ﻿using eBookCommerce.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,21 +29,17 @@ namespace eBookCommerce.Controllers
         {
             if (ModelState.IsValid)
             {                
-                // Add Mode
                 if (bookId == 0)
                 {
-                    //Book book = model;
-
                     Book book = new Book()
                     {
-                        //bookId = model.book.bookId,
                         bookName = model.book.bookName,
                         bookAuthor = model.book.bookAuthor,
                         bookPages = model.book.bookPages,
                         bookPrice = model.book.bookPrice,
                         bookImageUrl = model.book.bookImageUrl,
                         bookDescription = model.book.bookDescription,
-                        personId = model.book.personId,
+                        personId = model.user.Id,
                         genreId = model.book.genreId
                     };
 
@@ -50,11 +47,9 @@ namespace eBookCommerce.Controllers
                     ebcDB.SaveChanges();
                     return Json(true);
                 }
-                // Edit Mode
                 else
                 {
                     var book = ebcDB.Books.Single(a => a.bookId == bookId);
-                    //book = model;
 
                     book.bookName = model.book.bookName;
                     book.bookAuthor = model.book.bookAuthor;
@@ -62,7 +57,7 @@ namespace eBookCommerce.Controllers
                     book.bookPrice = model.book.bookPrice;
                     book.bookImageUrl = model.book.bookImageUrl;
                     book.bookDescription = model.book.bookDescription;
-                    book.personId = model.book.personId;
+                    book.personId = model.user.Id;
                     book.genreId = model.book.genreId;
                     ebcDB.SaveChanges();
                     return Json(true);
@@ -90,10 +85,8 @@ namespace eBookCommerce.Controllers
                     book.bookPages,
                     book.bookPrice,
                     "<img src='" + book.bookImageUrl + "' class='rounded-circle' style='width: 30px; height: 30px; object-fit: cover'>",
-                    //book.bookDescription,
                     "<button type='button' class='btn btn-primary' onclick='showBookFormModal(" + book.bookId + ")'>Edit Book</button>",
                     "<button type='button' class='btn btn-danger' onclick='removeBook(" + book.bookId + ")'>Delete Book</button>"
-                    //removeItemFromBasket
                 });
             }
 
@@ -128,6 +121,25 @@ namespace eBookCommerce.Controllers
 
             eBookCommerceViewModel viewModel = new eBookCommerceViewModel(bookId);
             return View(viewModel);
+        }
+
+        public JsonResult GetBooksMobile()
+        {
+            var books = ebcDB.Books.ToList();           
+            
+            var jsonResult = Json(
+                JsonConvert.SerializeObject(
+                    books,
+                    Formatting.None,
+                    new JsonSerializerSettings()
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    }),
+                    JsonRequestBehavior.AllowGet
+                );
+            jsonResult.MaxJsonLength = int.MaxValue;
+
+            return jsonResult;
         }
     }
 }

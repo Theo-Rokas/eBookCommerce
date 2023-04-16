@@ -17,7 +17,6 @@
                 <th>Book Pages</th>
                 <th>Book Price</th>
                 <th>Book Image</th>
-                @*<th>Book Description</th>*@
                 <th></th>
                 <th></th>
             </tr>
@@ -44,10 +43,7 @@
 
         function createOrEditBook(bookId) {
             var data = $("#bookForm").serialize();
-            console.log(data);
-
-            /*$.blockUI({ css: { backgroundColor: '#f00', color: '#fff' } });*/
-
+            
             $.ajax({
                 url: "/Book/CreateOrEditBook?bookId=" + bookId,
                 type: "POST",
@@ -56,16 +52,12 @@
                 data: data,
                 success: function (result) {                    
                     if (result == true) {
-                        toastr.success("Book was created successfully!!!")
-                        //window.location = "Home";
-
-                        //$.unblockUI();
+                        toastr.success("Book was created successfully!!!");
+                        window.location.reload();
                     }
                 },
                 error: function (error) {
-                    console.log(error);
-
-                    //$.unblockUI();
+                    console.log(error);                    
                 }
             })
         }
@@ -79,7 +71,7 @@
                 success: function (result) {  
                     if (result == true) {
                         toastr.success("Book was removed successfully!!!");
-                        //window.location = "Book";
+                        window.location.reload();
                     }
                 },
                 error: function (error) {
@@ -90,7 +82,7 @@
 
         function showBookFormModal(bookId = 0) {
             $('#bookFormModal').modal('show');            
-            $("#saveBtn").click(function () {
+            $("#saveBtn").on("click", function () {
                 createOrEditBook(bookId);
             });
         }
