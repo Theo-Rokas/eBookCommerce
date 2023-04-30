@@ -1,26 +1,40 @@
-﻿
+﻿@model eBookCommerce.Models.eBookCommerceViewModel
+
 @{
     ViewBag.Title = "Basket";
 }
 
-<div>
-    <h3>Basket</h3>    
+<div class="container-fluid">
+    <div class="row align-items-center my-topbar">
+        @{
+            Html.RenderPartial("_Topbar", Model);
+        }
+
+        <div class="col-md-3 text-center">
+            <button type="button" class="btn btn-danger my-button" onclick="removeAllItemsFromBasket()" style="margin: 10px 5px">Remove all from Basket</button>
+        </div>
+    </div>
 
     <table id="basketDataTable" class="display" style="width:100%">
         <thead>
             <tr>
                 <th>Person Email</th>
                 <th>Book Name</th>
+                <th>Book Author</th>
+                <th>Book Pages</th>
+                <th>Book Price</th>
+                <th>Book Image</th>
                 <th></th>
             </tr>
         </thead>
-    </table>  
+    </table>
 </div>
 
 @section scripts {
     <script>
         $(document).ready(function () {
             $("#basketDataTable").DataTable({
+                "ordering": false,
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
@@ -30,12 +44,30 @@
             });
         });
 
-        function removeItemFromBasket(itemId) {   
+        function removeItemFromBasket(itemId) {
             $.ajax({
                 url: "/Basket/RemoveItemFromBasket?itemId=" + itemId,
                 type: "POST",
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                success: function (result) {
+                    console.log(result);
+
+                    if (result == true) {
+                        window.location = "Basket";
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        }
+
+        function removeAllItemsFromBasket() {
+            $.ajax({
+                url: "/Basket/RemoveAllItemsFromBasket",
+                type: "POST",
                 dataType: "json",
-                contentType: "application/x-www-form-urlencoded; charset=UTF-8",                
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
                 success: function (result) {
                     console.log(result);
 

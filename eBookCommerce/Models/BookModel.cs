@@ -12,7 +12,6 @@ namespace eBookCommerce.Models
     {
         public class BookMetaData
         {
-            [JsonIgnore]
             public int bookId { get; set; }
 
             [Required]
@@ -25,7 +24,7 @@ namespace eBookCommerce.Models
 
             [Required]
             [Display(Name = "Book Pages")]
-            public string bookPages { get; set; }
+            public int bookPages { get; set; }
 
             [Required]
             [Display(Name = "Book Price")]
@@ -39,22 +38,11 @@ namespace eBookCommerce.Models
             [Display(Name = "Book Description")]
             public string bookDescription { get; set; }
 
-            [JsonIgnore]
             public string personId { get; set; }
 
-            [JsonIgnore]
             [Required]
             [Display(Name = "Book Genre")]
             public Nullable<int> genreId { get; set; }
-
-            [JsonIgnore]
-            public virtual AspNetUser AspNetUser { get; set; }
-
-            [JsonIgnore]
-            public virtual ICollection<Basket> Baskets { get; set; }
-
-            [JsonIgnore]
-            public virtual Genre Genre { get; set; }
         }
     }
 }

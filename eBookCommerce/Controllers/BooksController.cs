@@ -8,7 +8,7 @@ using System.Web.Mvc;
 
 namespace eBookCommerce.Controllers
 {
-    public class BookController : Controller
+    public class BooksController : Controller
     {
         eBookCommerceEntities ebcDB = new eBookCommerceEntities();
 
@@ -24,8 +24,14 @@ namespace eBookCommerce.Controllers
             return View(viewModel);
         }
 
+        public ActionResult CreateOrEditBook(int bookId = 0)
+        {
+            eBookCommerceViewModel viewModel = new eBookCommerceViewModel(bookId, 0);
+            return PartialView("_BookFormContent", viewModel);
+        }
+
         [HttpPost]
-        public JsonResult CreateOrEditBook(eBookCommerceViewModel model, int bookId = 0)
+        public ActionResult CreateOrEditBook(eBookCommerceViewModel model, int bookId = 0)
         {
             if (ModelState.IsValid)
             {                
@@ -44,8 +50,7 @@ namespace eBookCommerce.Controllers
                     };
 
                     ebcDB.Books.Add(book);
-                    ebcDB.SaveChanges();
-                    return Json(true);
+                    ebcDB.SaveChanges();                    
                 }
                 else
                 {
@@ -59,20 +64,36 @@ namespace eBookCommerce.Controllers
                     book.bookDescription = model.book.bookDescription;
                     book.personId = model.user.Id;
                     book.genreId = model.book.genreId;
-                    ebcDB.SaveChanges();
-                    return Json(true);
+                    ebcDB.SaveChanges();                    
                 }
+
+                return Json(true);
             }
 
-            return Json(false);
+            model.genresSelectList = model.getGenreSelectList();
+
+            return PartialView("_BookFormContent", model);
         }
 
         [HttpPost]
-        public JsonResult BooksToGrid(int draw)
+        public JsonResult BooksToGrid(int draw, Dictionary<string, string> search, int start, int length)
         {
             var user = ebcDB.AspNetUsers.SingleOrDefault(a => a.Email == User.Identity.Name);
 
             var booksList = ebcDB.Books.Where(a => a.personId == user.Id).ToList();
+            var recordsTotal = booksList.Count();
+
+            string searchValue = search["value"].ToLower();
+
+            if (!string.IsNullOrWhiteSpace(searchValue))
+            {
+                booksList = booksList.Where(
+                    a => a.bookName.ToLower().Contains(searchValue) ||
+                    a.bookAuthor.ToLower().Contains(searchValue)).ToList();
+            }
+
+            booksList = booksList.Skip(start).Take(length).ToList();
+            var recordsFiltered = booksList.Count();
 
             var data = new List<object>();
 
@@ -85,18 +106,16 @@ namespace eBookCommerce.Controllers
                     book.bookPages,
                     book.bookPrice,
                     "<img src='" + book.bookImageUrl + "' class='rounded-circle' style='width: 30px; height: 30px; object-fit: cover'>",
-                    "<button type='button' class='btn btn-primary' onclick='showBookFormModal(" + book.bookId + ")'>Edit Book</button>",
-                    "<button type='button' class='btn btn-danger' onclick='removeBook(" + book.bookId + ")'>Delete Book</button>"
+                    "<button type='button' class='btn btn-primary my-button' onclick='showBookFormModal(" + book.bookId + ")'>Edit Book</button>",
+                    "<button type='button' class='btn btn-danger my-button' onclick='removeBook(" + book.bookId + ")'>Delete Book</button>"
                 });
-            }
-
-            var totalRecords = data.Count();
+            }            
 
             var json = new
             {
                 draw = draw,
-                recordsFiltered = totalRecords,
-                recordsTotal = totalRecords,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
                 data = data
             };
 
@@ -110,36 +129,41 @@ namespace eBookCommerce.Controllers
             ebcDB.Books.Remove(book);
             ebcDB.SaveChanges();
             return Json(true);
-        }    
-        
-        public ActionResult SingleBook(int bookId)
-        {
-            if (User.Identity.Name == "")
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            eBookCommerceViewModel viewModel = new eBookCommerceViewModel(bookId);
-            return View(viewModel);
         }
 
-        public JsonResult GetBooksMobile()
+        [HttpPost]
+        public JsonResult RemoveAllBooks()
         {
-            var books = ebcDB.Books.ToList();           
-            
-            var jsonResult = Json(
-                JsonConvert.SerializeObject(
-                    books,
-                    Formatting.None,
-                    new JsonSerializerSettings()
-                    {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    }),
-                    JsonRequestBehavior.AllowGet
-                );
-            jsonResult.MaxJsonLength = int.MaxValue;
+            var user = ebcDB.AspNetUsers.SingleOrDefault(a => a.Email == User.Identity.Name);
+            var books = ebcDB.Books.Where(a => a.personId == user.Id).ToList();
 
-            return jsonResult;
+            foreach(var book in books)
+            {
+                ebcDB.Books.Remove(book);
+            }
+            
+            ebcDB.SaveChanges();
+            return Json(true);
+        }        
+
+        public string GetBooksMobile()
+        {
+            var books = ebcDB.Books.ToList();
+
+            var booksJson = from book in books
+                    select new
+                    {
+                        bookName = book.bookName,
+                        bookAuthor = book.bookAuthor,
+                        bookPages = book.bookPages,
+                        bookPrice = book.bookPrice,
+                        bookImageUrl = book.bookImageUrl,
+                        bookDescription = book.bookDescription                        
+                    };
+
+            string jsonString = JsonConvert.SerializeObject(booksJson.ToList());
+
+            return jsonString;
         }
     }
 }

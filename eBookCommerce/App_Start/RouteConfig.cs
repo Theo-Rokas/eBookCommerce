@@ -20,9 +20,9 @@ namespace eBookCommerce
             );            
 
             routes.MapRoute(
-                name: "Book",
-                url: "Book/{action}/{id}",
-                defaults: new { controller = "Book", action = "Index", id = UrlParameter.Optional }
+                name: "Books",
+                url: "Books/{action}/{id}",
+                defaults: new { controller = "Books", action = "Index", id = UrlParameter.Optional }
             );
 
             routes.MapRoute(

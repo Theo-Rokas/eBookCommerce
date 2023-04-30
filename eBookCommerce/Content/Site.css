@@ -1,24 +1,167 @@
-﻿body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+﻿.my-title {
+    font-size: 24px !important;
 }
 
-/* Set padding to keep content from hitting the edges */
-.body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+.my-sub-title {
+    font-size: 18px !important;
 }
 
-/* Override the default bootstrap behavior where horizontal description lists 
-   will truncate terms that are too long to fit in the left column 
-*/
-.dl-horizontal dt {
-    white-space: normal;
+.my-paragraph {
+    font-size: 16px !important;
 }
 
-/* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
-textarea {
-    max-width: 280px;
+.my-text-input {
+    font-size: 16px !important;
+}
+
+.my-button {
+    background-color: #97978f !important;
+    border-color: #97978f !important;
+    font-size: 14px !important;
+    transition: 0.5s ease-in-out;
+}
+
+.my-button:hover {
+    background-color: #e1e2e6 !important;
+    border-color: #e1e2e6 !important;
+    color: black;
+}
+
+.my-button-title {
+    background-color: #97978f !important;
+    border-color: #97978f !important;
+    font-size: 24px !important;
+    transition: 0.5s ease-in-out;
+}
+
+.my-button-title:hover {
+    background-color: #e1e2e6 !important;
+    border-color: #e1e2e6 !important;
+    color: black;
+}
+
+.my-background-image {
+    background-image: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://images.pexels.com/photos/1808200/pexels-photo-1808200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" );
+    background-position: center;
+    background-size: cover;
+    color: white;
+}
+
+/*HEX CODES:
+#787775
+#97978f
+#c4b3a9
+#e1e2e6
+#ebebeb*/
+
+.my-topbar {
+    background-color: #787775;
+    color: white;
+}
+
+.my-sidebar {
+    background-color: #787775;
+    color: white;
+}
+
+.my-modal {
+    background-color: #787775;
+    color: white;
+}
+
+.target {
+    cursor: pointer;
+    animation-name: rightToLeft;
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes rightToLeft {
+    0% {
+        transform: translateX(0px);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    50% {
+        transform: translateX(0px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+    100% {
+        transform: translateX(0px);
+    }
+}
+
+.flip-card {
+  background-color: transparent !important;
+  width: 100% !important;
+  height: 500px !important;
+  perspective: 1000px !important;
+}
+
+.flip-card-inner {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  text-align: center !important;
+  transition: transform 0.5s !important;
+  transform-style: preserve-3d !important;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2) !important;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg) !important;
+}
+
+.flip-card-front, .flip-card-back {
+  position: absolute !important;
+  width: 100% !important;
+  height: 100% !important;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+}
+
+.flip-card-front {
+    background-color: #e1e2e6 !important;
+    color: black !important;
+}
+
+.flip-card-back {
+    background-color: #e1e2e6 !important;
+    color: black !important;
+    transform: rotateY(180deg) !important;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding: 0px;
+    margin: 0px;
+}
+
+.pagination li {
+  color: black;
+  float: left;
+  padding: 10px 20px;
+  transition: 0.5s;
+  border: 1px solid #97978f;
+  margin: 0 5px;
+}
+
+.pagination li.active {
+  background-color: #97978f;
+  border: 1px solid #97978f;
+  color: white;  
+}
+
+.pagination li:hover:not(.active) {
+    background-color: #97978f;
+}
+
+.pagination a {
+    text-decoration: none;
+    color: white;
 }

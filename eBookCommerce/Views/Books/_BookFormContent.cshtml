@@ -1,0 +1,47 @@
+﻿@model eBookCommerce.Models.eBookCommerceViewModel
+
+<form id="bookForm">
+    <div class="mb-3">
+        @Html.LabelFor(a => a.book.bookName, new { @class = "form-label my-sub-title" })
+        @Html.TextBoxFor(a => a.book.bookName, new { @id = "bookName", @class = "form-control my-text-input", @name = "bookName" })
+        @Html.ValidationMessageFor(a => a.book.bookName, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="mb-3">
+        @Html.LabelFor(a => a.book.bookAuthor, new { @class = "form-label my-sub-title" })
+        @Html.TextBoxFor(a => a.book.bookAuthor, new { @id = "bookAuthor", @class = "form-control my-text-input", @name = "bookAuthor" })
+        @Html.ValidationMessageFor(a => a.book.bookAuthor, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="mb-3">
+        @Html.LabelFor(a => a.book.bookPages, new { @class = "form-label my-sub-title" })
+        @Html.TextBoxFor(a => a.book.bookPages, new { @id = "bookPages", @class = "form-control my-text-input", @name = "bookPages" })
+        @Html.ValidationMessageFor(a => a.book.bookPages, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="mb-3">
+        @Html.LabelFor(a => a.book.bookPrice, new { @class = "form-label my-sub-title" })
+        @Html.TextBoxFor(a => a.book.bookPrice, new { @id = "bookPrice", @class = "form-control my-text-input", @name = "bookPrice" })
+        @Html.ValidationMessageFor(a => a.book.bookPrice, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="mb-3">
+        @Html.LabelFor(a => a.book.bookImageUrl, new { @class = "form-label my-sub-title" })
+        @Html.TextBoxFor(a => a.book.bookImageUrl, new { @id = "bookImageUrl", @class = "form-control my-text-input", @name = "bookImageUrl" })
+        @Html.ValidationMessageFor(a => a.book.bookImageUrl, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="mb-3">
+        @Html.LabelFor(a => a.book.bookDescription, new { @class = "form-label my-sub-title" })
+        @Html.TextBoxFor(a => a.book.bookDescription, new { @id = "bookDescription", @class = "form-control my-text-input", @name = "bookDescription" })
+        @Html.ValidationMessageFor(a => a.book.bookDescription, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="mb-3">
+        @Html.LabelFor(a => a.book.genreId, new { @class = "form-label my-sub-title" })
+        @Html.DropDownListFor(a => a.book.genreId, Model.genresSelectList, new { @id = "genreId", @class = "form-control my-text-input", @name = "genreId" })
+        @Html.ValidationMessageFor(a => a.book.genreId, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.HiddenFor(a => a.user.Id, new { @id = "personId", @class = "form-control", @name = "personId" })
+</form>

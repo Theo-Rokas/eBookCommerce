@@ -10,20 +10,13 @@
 <style>
 </style>
 
-<div class="container">
-    <div class="row align-items-center">
-        <div class="col-md-5">
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-success" type="submit">Search</button>
-            </form>
-        </div>
+<div class="container-fluid">
+    <div class="row align-items-center my-topbar">
+        @{
+            Html.RenderPartial("_Topbar", Model);
+        }
 
-        <div class="col-md-5">
-            @Html.DropDownList("bookType", Model.genresSelectList, new { @class = "form-select" })
-        </div>
-
-        <div class="col-md-2">
+        <div class="col-md-3">
             @if (Model.booksPagedList.Count > 0)
             {
                 @Html.PagedListPager(Model.booksPagedList, page => Url.Action("Index", new { page }))
@@ -32,62 +25,43 @@
     </div>
 
     <div class="row">
-        @if (Model.book != null)
-        {
-            <div class="col-md-9 mt-5">
-                <div class="card" style="width: 100%; height: 100%">
-                    <div class="row">
-                        <div class="col-md-4 text-center">
-                            <div class="card" style="width: 100%; height: 100%; border: none">
-                                <img src="@Model.book.bookImageUrl" class="card-img-top" style="object-fit: cover">
-                                <div class="card-body">
-                                    <h5 class="card-title">@Model.book.bookName</h5>
-                                    <p class="card-text">@Model.book.bookAuthor</p>
-                                    <button type="button" class="btn btn-primary" onclick="seeMore(@Model.book.bookId)">See More</button>
-                                    <button type="button" class="btn btn-success" onclick="showAddToBasketModal(@Model.book.bookId)">Add to Basket</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <p class="card-text">@Model.book.bookDescription</p>
-                                <p class="card-text"><small class="text-muted">@Model.book.bookPrice</small></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-
         @if (Model.booksPagedList.Count > 0)
         {
             foreach (var book in Model.booksPagedList)
             {
                 <div class="col-md-3 text-center mt-5">
-                    <div class="card" style="width: 100%; height: 100%">
-                        <img src="@book.bookImageUrl" class="card-img-top" style="object-fit: cover">
-                        <div class="card-body">
-                            <h5 class="card-title">@book.bookName</h5>
-                            <p class="card-text">@book.bookAuthor</p>
-                            <button type="button" class="btn btn-primary" onclick="seeMore(@book.bookId)">See More</button>
-                            <button type="button" class="btn btn-success" onclick="showAddToBasketModal(@book.bookId)">Add to Basket</button>
+                    <div class="flip-card my-card" style="width: 100%; height: 100%">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <img src="@book.bookImageUrl" style="width: 100%; height: 75%; object-fit: cover">
+                                <div style="width: 100%; height: 25%">
+                                    <h5 class="my-title">@book.bookName</h5>
+                                    <p class="my-sub-title">By @book.bookAuthor</p>
+                                    <p class="my-paragraph"><small class="text-muted">Seller @book.AspNetUser.UserName</small></p>
+                                </div>
+                            </div>
+                            <div class="flip-card-back">
+                                <h5 class="my-title">@book.bookName</h5>
+                                <p class="my-sub-title">By @book.bookAuthor</p>
+                                <p class="my-paragraph"><small class="text-muted">Seller @book.AspNetUser.UserName</small></p>
+                                <p class="my-paragraph">@book.bookDescription</p>
+                                <p class="my-paragraph"><small class="text-muted">@book.bookPrice</small></p>
+                                <button type="button" class="btn btn-success my-button" onclick="showAddToBasketModal(@book.bookId)">Add to Basket</button>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             }
         }
     </div>
 
     @{
-        Html.RenderPartial("_AddToBasketModal");
+        Html.RenderPartial("_GenericModal");
     }
 </div>
 
-<script type="text/javascript">
-    function seeMore(bookId) {
-        var url = "Book/SingleBook?bookId=" + bookId;
-        window.location = url;
-    }
+<script type="text/javascript">    
 
     function addToBasket(bookId) {
         var userId = "@Model.user.Id";
@@ -96,7 +70,6 @@
         $.ajax({
             url: url ,
             type: "POST",
-            dataType: "json",
             contentType: "application/x-www-form-urlencoded; charset=UTF-8",
             success: function (result) {
                 console.log(result);
@@ -112,9 +85,17 @@
     }
 
     function showAddToBasketModal(bookId = 0) {
-        $('#addToBasketModal').modal('show');
-        $("#yesBtn").click(function () {
+        $('#genericModal').modal('show');
+        $('.modal-title').html("Add to basket");
+        $('.modal-body').html("Are you sure you want to add this item to your basket?");
+
+        $('#yesBtn').html("Yes");
+        $("#yesBtn").off("click")
+        $("#yesBtn").on("click", function () {
             addToBasket(bookId);
         });
+
+        $('#noBtn').html("No");
     }
+
 </script>

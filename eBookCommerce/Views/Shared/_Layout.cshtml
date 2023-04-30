@@ -7,74 +7,27 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
+    <link href="~/Content/" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
+
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/toastr.css" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.css">
-    <link href="/Content/PagedList.css" rel="stylesheet" type="text/css" />
+    @*<link href="/Content/PagedList.css" rel="stylesheet" type="text/css" />*@
 
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-image: linear-gradient(#fce4db, #e58f23); /*#1ac1b5*/
-        }
-
-        #sidebar {
-            border-right: 1px solid white;
-            background-image: linear-gradient(#fce4db, #e58f23);
-        }
-
-        .nav-link {
-            border: none !important;
-            color: white !important;
-            padding: 10px 24px !important;
-            text-align: center !important;
-            text-decoration: none !important;
-            display: inline-block !important;
-            font-size: 16px !important;
-            transition-duration: 0.4s;
-        }
-
-        .nav-link:hover {
-            background-color: green !important;            
+            font-family: "Caveat";
+            background-color: #c4b3a9;
         }
     </style>
 </head>
-<body> 
-    @* START SIDEBAR *@
-    <div class="container-fluid">
-        <div class="row flex-nowrap">
-            <div id="sidebar" class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
-                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-                    <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                        <span class="fs-5 d-none d-sm-inline">EBookCommerce</span>
-                    </a>
-                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                        <li class="nav-item">
-                            @Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link align-middle px-0" })
-                        </li>
-                        <li class="nav-item">
-                            @Html.ActionLink("Book", "Index", "Book", null, new { @class = "nav-link align-middle px-0" })
-                        </li>
-                        <li class="nav-item">
-                            @Html.ActionLink("Basket", "Index", "Basket", null, new { @class = "nav-link align-middle px-0" })
-                        </li>
-                        <li class="nav-item">
-                            @Html.ActionLink("Register", "Register", "Account", null, new { @class = "nav-link align-middle px-0" })
-                        </li>
-                        <li class="nav-item">
-                            @Html.ActionLink("Login", "Login", "Account", null, new { @class = "nav-link align-middle px-0" })
-                        </li>
-                    </ul>                    
-                </div>
-            </div>
-            <div class="col py-3">
-                <div class="container body-content">
-                    @RenderBody()
-                </div>
-            </div>
-        </div>
+<body>     
+    <div class="container-fluid body-content" style="padding: 0 !important">
+        @RenderBody()
     </div>    
 
     @Scripts.Render("~/bundles/jquery")

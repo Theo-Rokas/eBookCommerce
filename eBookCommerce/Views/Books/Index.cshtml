@@ -1,0 +1,153 @@
+﻿@model eBookCommerce.Models.eBookCommerceViewModel
+
+@{
+    ViewBag.Title = "Books";
+}
+
+<div class="container-fluid">
+    <div class="row align-items-center my-topbar">
+        @{
+            Html.RenderPartial("_Topbar", Model);
+        }
+
+        <div class="col-md-3 text-center">
+            <button type="button" class="btn btn-primary my-button" onclick="showBookFormModal(0)" style="margin: 10px 5px">Create New Book</button>
+            <button type="button" class="btn btn-danger my-button" onclick="deleteAllBooks()" style="margin: 10px 5px">Delete All Books</button>
+        </div>
+    </div>
+
+    <table id="booksDataTable" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Author</th>
+                <th>Pages</th>
+                <th>Price</th>
+                <th>Image</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+    </table>
+
+    @{
+        Html.RenderPartial("_GenericModal");
+    }
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var dt;
+
+        $(document).ready(function () {
+            dt = $("#booksDataTable").DataTable({
+                "ordering": false,
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "Books/BooksToGrid",
+                    "type": "POST",
+                }
+            });
+        });
+
+        function createOrEditBook(bookId) {
+            var data = $("#bookForm").serialize();
+
+            $.ajax({
+                url: "/Books/CreateOrEditBook?bookId=" + bookId,
+                type: "POST",
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                data: data,
+                success: function (result) {
+                    if (result == true) {
+                        
+                        if (bookId != 0) {
+                            toastr.success("Book was edited successfully!!!");
+                        }
+                        else {
+                            toastr.success("Book was created successfully!!!");
+                        }
+
+                        $('#genericModal').modal('hide');
+                        dt.draw();
+                    }
+                    else {
+                        toastr.error("Book was not created!!!");
+                        $('.modal-body').html(result);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        }
+
+        function removeBook(bookId) {
+            $.ajax({
+                url: "/Books/RemoveBook?bookId=" + bookId,
+                type: "POST",
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                success: function (result) {
+                    if (result == true) {
+                        toastr.success("Book was removed successfully!!!");
+                        dt.draw();                        
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        }
+
+        function deleteAllBooks() {
+            $.ajax({
+                url: "/Books/RemoveAllBooks",
+                type: "POST",
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                success: function (result) {
+                    if (result == true) {
+                        toastr.success("All Books were removed successfully!!!");
+                        dt.draw();                        
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        }
+
+        function showBookFormModal(bookId = 0) {
+            $.ajax({
+                url: "/Books/CreateOrEditBook?bookId=" + bookId,
+                type: "GET",
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                success: function (result) {
+                    $('#genericModal').modal('show');
+
+                    $('.modal-title').html("Create Book");
+                    if (bookId != 0) {
+                        $('.modal-title').html("Edit Book");
+                    }
+
+                    $('.modal-body').html(result);
+
+                    $('#yesBtn').html("Create Book");
+                    if (bookId != 0) {
+                        $('#yesBtn').html("Edit Book");
+                    }
+
+                    $("#yesBtn").off("click")
+                    $("#yesBtn").on("click", function () {
+                        createOrEditBook(bookId);
+                    });
+
+                    $('#noBtn').html("Close");
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        }
+    </script>
+}

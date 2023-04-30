@@ -23,7 +23,7 @@ namespace eBookCommerce.Models
         public int bookId { get; set; }
         public string bookName { get; set; }
         public string bookAuthor { get; set; }
-        public string bookPages { get; set; }
+        public Nullable<int> bookPages { get; set; }
         public Nullable<decimal> bookPrice { get; set; }
         public string bookImageUrl { get; set; }
         public string bookDescription { get; set; }

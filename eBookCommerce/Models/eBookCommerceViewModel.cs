@@ -12,8 +12,6 @@ namespace eBookCommerce.Models
     {
         public AspNetUser user { get; set; }
 
-        public AspNetUser seller { get; set; }
-
         public Book book { get; set; }
 
         public List<Book> books { get; set; }
@@ -40,31 +38,35 @@ namespace eBookCommerce.Models
             if (bookId != 0)
             {
                 book = ebcDB.Books.SingleOrDefault(a => a.bookId == bookId);
-
-                seller = book.AspNetUser;
-
-                books = ebcDB.Books.Where(a => a.AspNetUser.Id == seller.Id && a.bookId != bookId).ToList();
-
-                booksPagedList = books.ToPagedList(page ?? 1, 5);
             }
             else
             {
-                books = ebcDB.Books.ToList();
-                
-                if(books.Any())
-                    book = books[getRandomBookPosition()];
+                books = ebcDB.Books.Where(a => a.personId != user.Id && !a.Baskets.Any(b => b.personId == user.Id)).ToList();
 
-                books = books.Where(a => a.bookId != book.bookId).ToList();
-
-                booksPagedList = books.ToPagedList(page ?? 1, 5);
-
+                booksPagedList = books.ToPagedList(page ?? 1, 8);
             }
 
             genres = ebcDB.Genres.ToList();
 
-            genresSelectList = new List<SelectListItem>();
+            genresSelectList = getGenreSelectList();
 
-            foreach(var item in genres)
+            if (genreId != 0)
+            {
+                books = books.Where(a => a.genreId == genreId).ToList();
+
+                booksPagedList = books.ToPagedList(page ?? 1, 8);
+            }
+        }   
+        
+        public List<SelectListItem> getGenreSelectList()
+        {
+            var ebcDB = new eBookCommerceEntities();
+
+            genres = ebcDB.Genres.ToList();
+
+            var genresSelectList = new List<SelectListItem>();
+
+            foreach (var item in genres)
             {
                 genresSelectList.Add(
                     new SelectListItem()
@@ -76,19 +78,7 @@ namespace eBookCommerce.Models
                 );
             }
 
-            if (genreId != 0)
-            {
-                books = books.Where(a => a.genreId == genreId).ToList();
-
-                booksPagedList = books.ToPagedList(page ?? 1, 5);
-            }
+            return genresSelectList;
         }
-
-        private int getRandomBookPosition()
-        {
-            Random rnd = new Random();
-            int bookPosition = rnd.Next(0, books.Count);
-            return bookPosition;
-        }        
     }
 }

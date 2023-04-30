@@ -81,7 +81,7 @@
           <Property Name="bookId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="bookName" Type="nvarchar" MaxLength="128" />
           <Property Name="bookAuthor" Type="nvarchar" MaxLength="128" />
-          <Property Name="bookPages" Type="nvarchar" MaxLength="128" />
+          <Property Name="bookPages" Type="int" />
           <Property Name="bookPrice" Type="decimal" Precision="10" Scale="2" />
           <Property Name="bookImageUrl" Type="nvarchar(max)" />
           <Property Name="bookDescription" Type="varchar(max)" />
@@ -95,6 +95,32 @@
           <Property Name="genreId" Type="int" Nullable="false" />
           <Property Name="genreName" Type="nvarchar" MaxLength="128" Nullable="false" />
         </EntityType>
+        <Association Name="FK_Basket_AspNetUsers">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+          <End Role="Basket" Type="Self.Basket" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Basket">
+              <PropertyRef Name="personId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Basket_Book">
+          <End Role="Book" Type="Self.Book" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Basket" Type="Self.Basket" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Book">
+              <PropertyRef Name="bookId" />
+            </Principal>
+            <Dependent Role="Basket">
+              <PropertyRef Name="bookId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Book_AspNetUsers">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
           <End Role="Book" Type="Self.Book" Multiplicity="*" />
@@ -185,6 +211,14 @@
           <EntitySet Name="Basket" EntityType="Self.Basket" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Book" EntityType="Self.Book" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Genre" EntityType="Self.Genre" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Basket_AspNetUsers" Association="Self.FK_Basket_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Basket" EntitySet="Basket" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Basket_Book" Association="Self.FK_Basket_Book">
+            <End Role="Book" EntitySet="Book" />
+            <End Role="Basket" EntitySet="Basket" />
+          </AssociationSet>
           <AssociationSet Name="FK_Book_AspNetUsers" Association="Self.FK_Book_AspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Book" EntitySet="Book" />
@@ -292,7 +326,7 @@
           <Property Name="bookId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="bookName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="bookAuthor" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="bookPages" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="bookPages" Type="Int32" />
           <Property Name="bookPrice" Type="Decimal" Precision="10" Scale="2" />
           <Property Name="bookImageUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="bookDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
