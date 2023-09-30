@@ -32,6 +32,12 @@ namespace eBookCommerce
             );
 
             routes.MapRoute(
+                name: "Api",
+                url: "Api/{action}",
+                defaults: new { controller = "Api", action = "Index" }
+            );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}",
                 defaults: new { controller = "Home", action = "Index" }

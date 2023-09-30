@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 
 namespace eBookCommerce.Controllers
 {
@@ -14,7 +15,7 @@ namespace eBookCommerce.Controllers
 
         public ActionResult Index(int? page = null)
         {
-            if(User.Identity.Name == "")
+            if (User.Identity.Name == "")
             {
                 return RedirectToAction("Login", "Account");
             }

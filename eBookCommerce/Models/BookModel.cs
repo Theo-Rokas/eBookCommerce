@@ -30,9 +30,9 @@ namespace eBookCommerce.Models
             [Display(Name = "Book Price")]
             public Nullable<decimal> bookPrice { get; set; }
 
-            [Required]
-            [Display(Name = "Book Image Url")]
-            public string bookImageUrl { get; set; }
+            //[Required]
+            //[Display(Name = "Book Image Url")]
+            //public string bookImageUrl { get; set; }
 
             [Required]
             [Display(Name = "Book Description")]
@@ -42,7 +42,7 @@ namespace eBookCommerce.Models
 
             [Required]
             [Display(Name = "Book Genre")]
-            public Nullable<int> genreId { get; set; }
+            public Nullable<int> genreId { get; set; }            
         }
     }
 }

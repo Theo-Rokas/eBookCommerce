@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -23,6 +24,8 @@ namespace eBookCommerce.Models
         public List<Genre> genres { get; set; }
 
         public List<SelectListItem> genresSelectList { get; set; }
+        
+        public HttpPostedFileBase file { get; set; }
 
         public eBookCommerceViewModel()
         {

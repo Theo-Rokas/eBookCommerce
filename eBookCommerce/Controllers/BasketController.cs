@@ -1,4 +1,5 @@
 ﻿using eBookCommerce.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,36 +27,36 @@ namespace eBookCommerce.Controllers
         public JsonResult BasketToGrid(int draw, Dictionary<string, string> search, int start, int length)
         {
             var user = ebcDB.AspNetUsers.SingleOrDefault(a => a.Email == User.Identity.Name);
+            var basketItems = ebcDB.Baskets.Where(a => a.personId == user.Id).ToList();
 
-            var basketList = ebcDB.Baskets.Where(a => a.personId == user.Id).ToList();
-            var recordsTotal = basketList.Count();
+            var recordsTotal = basketItems.Count();
 
             string searchValue = search["value"].ToLower();
 
             if (!string.IsNullOrWhiteSpace(searchValue))
             {
-                basketList = basketList.Where(
+                basketItems = basketItems.Where(
                     a => a.AspNetUser.Email.ToLower().Contains(searchValue) ||
                     a.Book.bookName.ToLower().Contains(searchValue) ||
                     a.Book.bookAuthor.ToLower().Contains(searchValue)).ToList();
             }
 
-            basketList = basketList.Skip(start).Take(length).ToList();
-            var recordsFiltered = basketList.Count();
+            basketItems = basketItems.Skip(start).Take(length).ToList();
+            var recordsFiltered = basketItems.Count();
 
             var data = new List<object>();
 
-            foreach (var basket in basketList)
+            foreach (var basketItem in basketItems)
             {
                 data.Add(new object[]
                 {
-                    basket.AspNetUser.Email,
-                    basket.Book.bookName,
-                    basket.Book.bookAuthor,
-                    basket.Book.bookPages,
-                    basket.Book.bookPrice,
-                    "<img src='" + basket.Book.bookImageUrl + "' class='rounded-circle' style='width: 30px; height: 30px; object-fit: cover'>",
-                    "<button type='button' class='btn btn-danger my-button' onclick='removeItemFromBasket(" + basket.basketId + ")'>Remove from Basket</button>"
+                    basketItem.AspNetUser.Email,
+                    basketItem.Book.bookName,
+                    basketItem.Book.bookAuthor,
+                    basketItem.Book.bookPages,
+                    basketItem.Book.bookPrice,
+                    "<img src='" + basketItem.Book.bookImageUrl + "' class='rounded-circle' style='width: 30px; height: 30px; object-fit: cover'>",
+                    "<button type='button' class='btn btn-danger my-button' onclick='removeItemFromBasket(" + basketItem.basketId + ")'>Remove from Basket</button>"
                 });
             }
 
@@ -95,6 +96,5 @@ namespace eBookCommerce.Controllers
             ebcDB.SaveChanges();
             return Json(true);
         }
-
     }
 }

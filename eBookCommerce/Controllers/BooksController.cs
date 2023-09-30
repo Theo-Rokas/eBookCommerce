@@ -34,7 +34,9 @@ namespace eBookCommerce.Controllers
         public ActionResult CreateOrEditBook(eBookCommerceViewModel model, int bookId = 0)
         {
             if (ModelState.IsValid)
-            {                
+            {
+                var s3BookImageUrl = Helpers.S3Helper.UploadFile(model.file);
+
                 if (bookId == 0)
                 {
                     Book book = new Book()
@@ -43,7 +45,7 @@ namespace eBookCommerce.Controllers
                         bookAuthor = model.book.bookAuthor,
                         bookPages = model.book.bookPages,
                         bookPrice = model.book.bookPrice,
-                        bookImageUrl = model.book.bookImageUrl,
+                        bookImageUrl = s3BookImageUrl,
                         bookDescription = model.book.bookDescription,
                         personId = model.user.Id,
                         genreId = model.book.genreId
@@ -60,7 +62,7 @@ namespace eBookCommerce.Controllers
                     book.bookAuthor = model.book.bookAuthor;
                     book.bookPages = model.book.bookPages;
                     book.bookPrice = model.book.bookPrice;
-                    book.bookImageUrl = model.book.bookImageUrl;
+                    book.bookImageUrl = s3BookImageUrl;
                     book.bookDescription = model.book.bookDescription;
                     book.personId = model.user.Id;
                     book.genreId = model.book.genreId;
@@ -79,8 +81,8 @@ namespace eBookCommerce.Controllers
         public JsonResult BooksToGrid(int draw, Dictionary<string, string> search, int start, int length)
         {
             var user = ebcDB.AspNetUsers.SingleOrDefault(a => a.Email == User.Identity.Name);
-
             var booksList = ebcDB.Books.Where(a => a.personId == user.Id).ToList();
+
             var recordsTotal = booksList.Count();
 
             string searchValue = search["value"].ToLower();
@@ -144,26 +146,6 @@ namespace eBookCommerce.Controllers
             
             ebcDB.SaveChanges();
             return Json(true);
-        }        
-
-        public string GetBooksMobile()
-        {
-            var books = ebcDB.Books.ToList();
-
-            var booksJson = from book in books
-                    select new
-                    {
-                        bookName = book.bookName,
-                        bookAuthor = book.bookAuthor,
-                        bookPages = book.bookPages,
-                        bookPrice = book.bookPrice,
-                        bookImageUrl = book.bookImageUrl,
-                        bookDescription = book.bookDescription                        
-                    };
-
-            string jsonString = JsonConvert.SerializeObject(booksJson.ToList());
-
-            return jsonString;
-        }
+        }  
     }
 }
