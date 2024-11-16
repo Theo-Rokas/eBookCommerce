@@ -1,0 +1,17 @@
+﻿@model eBookCommerce.Models.Payment
+
+@{
+    ViewBag.Title = "PaymentSuccess";
+}
+
+<div class="container my-auto">
+    <div class="alert alert-success text-center" role="alert">
+        <h1 class="display-4">Payment Successful!</h1>
+        <p class="lead">Your payment has been processed successfully.</p>
+        <hr class="my-4">
+        <p>Order Number: <strong>@Model.paymentOrderNumber</strong></p>
+        <p>Approved Amount: <strong>@Model.paymentApprovedAmount</strong></p>
+        <p>Cardholder: <strong>@Model.paymentCardholderName</strong></p>
+        <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-3 my-button">Home</a>
+    </div>
+</div>

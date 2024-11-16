@@ -45,92 +45,15 @@
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
-                    "url": "Books/BooksToGrid",
+                    "url": "@Url.Action("BooksToGrid", "Books")",
                     "type": "POST",
                 }
             });
         });
 
-        function createOrEditBook(bookId) {
-            //var data = $("#bookForm").serialize();
-            var data = new FormData();
-
-            var file = $('#file')[0].files[0];
-            data.append("file", file);
-
-            var strings = $('form').serializeArray();
-            $.each(strings, function (key, input) {
-                data.append(input.name, input.value);
-            });
-
-            $.ajax({
-                url: "/Books/CreateOrEditBook?bookId=" + bookId,
-                type: "POST",
-                //contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-                contentType: false,
-                processData: false,
-                data: data,
-                success: function (result) {
-                    if (result == true) {
-                        
-                        if (bookId != 0) {
-                            toastr.success("Book was edited successfully!!!");
-                        }
-                        else {
-                            toastr.success("Book was created successfully!!!");
-                        }
-
-                        $('#genericModal').modal('hide');
-                        dt.draw();
-                    }
-                    else {
-                        toastr.error("Book was not created!!!");
-                        $('.modal-body').html(result);
-                    }
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            })
-        }
-
-        function removeBook(bookId) {
-            $.ajax({
-                url: "/Books/RemoveBook?bookId=" + bookId,
-                type: "POST",
-                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-                success: function (result) {
-                    if (result == true) {
-                        toastr.success("Book was removed successfully!!!");
-                        dt.draw();                        
-                    }
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            })
-        }
-
-        function deleteAllBooks() {
-            $.ajax({
-                url: "/Books/RemoveAllBooks",
-                type: "POST",
-                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-                success: function (result) {
-                    if (result == true) {
-                        toastr.success("All Books were removed successfully!!!");
-                        dt.draw();                        
-                    }
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            })
-        }
-
         function showBookFormModal(bookId = 0) {
             $.ajax({
-                url: "/Books/CreateOrEditBook?bookId=" + bookId,
+                url: "@Url.Action("CreateOrEditBook", "Books")?bookId=" + bookId,
                 type: "GET",
                 contentType: "application/x-www-form-urlencoded; charset=UTF-8",
                 success: function (result) {
@@ -154,6 +77,81 @@
                     });
 
                     $('#noBtn').html("Close");
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        }
+
+        function createOrEditBook(bookId) {
+            var data = new FormData();
+
+            var file = $('#webBookImageFile')[0].files[0];
+            data.append("webBookImageFile", file);
+
+            var strings = $('form').serializeArray();
+            $.each(strings, function (key, input) {
+                data.append(input.name, input.value);
+            });
+
+            $.ajax({
+                url: "@Url.Action("CreateOrEditBook", "Books")?bookId=" + bookId,
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (result) {
+                    if (result == true) {
+
+                        if (bookId != 0) {
+                            toastr.success("Book was edited successfully!!!");
+                        }
+                        else {
+                            toastr.success("Book was created successfully!!!");
+                        }
+
+                        $('#genericModal').modal('hide');
+                        dt.draw();
+                    }
+                    else {
+                        toastr.error("Book was not created!!!");
+                        $('.modal-body').html(result);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        }
+
+        function removeBook(bookId) {
+            $.ajax({
+                url: "@Url.Action("RemoveBook", "Books")?bookId=" + bookId,
+                type: "POST",
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                success: function (result) {
+                    if (result == true) {
+                        toastr.success("Book was removed successfully!!!");
+                        dt.draw();
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        }
+
+        function deleteAllBooks() {
+            $.ajax({
+                url: "@Url.Action("RemoveAllBooks", "Books")",
+                type: "POST",
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                success: function (result) {
+                    if (result == true) {
+                        toastr.success("All Books were removed successfully!!!");
+                        dt.draw();
+                    }
                 },
                 error: function (error) {
                     console.log(error);

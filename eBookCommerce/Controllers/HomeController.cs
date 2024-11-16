@@ -27,8 +27,15 @@ namespace eBookCommerce.Controllers
         [HttpPost]
         public JsonResult AddToBasket(Basket model)
         {
-            ebcDB.Baskets.Add(model);
-            ebcDB.SaveChanges();
+            var user = ebcDB.AspNetUsers.SingleOrDefault(a => a.Email == User.Identity.Name);
+            var basketItems = ebcDB.Baskets.Where(a => a.personId == user.Id).ToList();
+
+            if(!basketItems.Any(a => a.bookId == model.bookId))
+            {
+                ebcDB.Baskets.Add(model);
+                ebcDB.SaveChanges();
+            }
+            
             return Json(true);
         }
     }

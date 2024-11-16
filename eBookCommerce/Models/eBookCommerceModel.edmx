@@ -5,16 +5,6 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="eBookCommerceModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="__MigrationHistory">
-          <Key>
-            <PropertyRef Name="MigrationId" />
-            <PropertyRef Name="ContextKey" />
-          </Key>
-          <Property Name="MigrationId" Type="nvarchar" MaxLength="150" Nullable="false" />
-          <Property Name="ContextKey" Type="nvarchar" MaxLength="300" Nullable="false" />
-          <Property Name="Model" Type="varbinary(max)" Nullable="false" />
-          <Property Name="ProductVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
-        </EntityType>
         <EntityType Name="AspNetRoles">
           <Key>
             <PropertyRef Name="Id" />
@@ -73,6 +63,7 @@
           <Property Name="basketId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="personId" Type="nvarchar" MaxLength="128" />
           <Property Name="bookId" Type="int" />
+          <Property Name="paymentId" Type="int" />
         </EntityType>
         <EntityType Name="Book">
           <Key>
@@ -94,6 +85,25 @@
           </Key>
           <Property Name="genreId" Type="int" Nullable="false" />
           <Property Name="genreName" Type="nvarchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Payment">
+          <Key>
+            <PropertyRef Name="paymentId" />
+          </Key>
+          <Property Name="paymentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="paymentOrderId" Type="nvarchar" MaxLength="150" />
+          <Property Name="paymentOrderNumber" Type="nvarchar" MaxLength="150" />
+          <Property Name="paymentAmount" Type="money" />
+          <Property Name="paymentUserName" Type="nvarchar" MaxLength="200" />
+          <Property Name="paymentEmail" Type="nvarchar" MaxLength="200" />
+          <Property Name="paymentStatus" Type="int" />
+          <Property Name="paymentApprovedAmount" Type="money" />
+          <Property Name="paymentMaskedPan" Type="nvarchar" MaxLength="150" />
+          <Property Name="paymentCardholderName" Type="nvarchar" MaxLength="150" />
+          <Property Name="paymentErrorCode" Type="nvarchar" MaxLength="100" />
+          <Property Name="paymentErrorMessage" Type="nvarchar(max)" />
+          <Property Name="paymentCreatedAt" Type="datetime2" Precision="7" />
+          <Property Name="paymentUpdatedAt" Type="datetime2" Precision="7" />
         </EntityType>
         <Association Name="FK_Basket_AspNetUsers">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
@@ -118,6 +128,20 @@
             </Principal>
             <Dependent Role="Basket">
               <PropertyRef Name="bookId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Basket_Payment">
+          <End Role="Payment" Type="Self.Payment" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Basket" Type="Self.Basket" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Payment">
+              <PropertyRef Name="paymentId" />
+            </Principal>
+            <Dependent Role="Basket">
+              <PropertyRef Name="paymentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -202,7 +226,6 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="eBookCommerceModelStoreContainer">
-          <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
@@ -211,12 +234,17 @@
           <EntitySet Name="Basket" EntityType="Self.Basket" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Book" EntityType="Self.Book" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Genre" EntityType="Self.Genre" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Payment" EntityType="Self.Payment" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Basket_AspNetUsers" Association="Self.FK_Basket_AspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Basket" EntitySet="Basket" />
           </AssociationSet>
           <AssociationSet Name="FK_Basket_Book" Association="Self.FK_Basket_Book">
             <End Role="Book" EntitySet="Book" />
+            <End Role="Basket" EntitySet="Basket" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Basket_Payment" Association="Self.FK_Basket_Payment">
+            <End Role="Payment" EntitySet="Payment" />
             <End Role="Basket" EntitySet="Basket" />
           </AssociationSet>
           <AssociationSet Name="FK_Book_AspNetUsers" Association="Self.FK_Book_AspNetUsers">
@@ -248,33 +276,65 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="eBookCommerceModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="C__MigrationHistory">
-          <Key>
-            <PropertyRef Name="MigrationId" />
-            <PropertyRef Name="ContextKey" />
-          </Key>
-          <Property Name="MigrationId" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ContextKey" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Model" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
-          <Property Name="ProductVersion" Type="String" MaxLength="32" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
+        <EntityContainer Name="eBookCommerceEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AspNetRoles" EntityType="eBookCommerceModel.AspNetRole" />
+          <EntitySet Name="AspNetUserClaims" EntityType="eBookCommerceModel.AspNetUserClaim" />
+          <EntitySet Name="AspNetUserLogins" EntityType="eBookCommerceModel.AspNetUserLogin" />
+          <EntitySet Name="AspNetUsers" EntityType="eBookCommerceModel.AspNetUser" />
+          <EntitySet Name="Baskets" EntityType="eBookCommerceModel.Basket" />
+          <EntitySet Name="Books" EntityType="eBookCommerceModel.Book" />
+          <EntitySet Name="Genres" EntityType="eBookCommerceModel.Genre" />
+          <EntitySet Name="Payments" EntityType="eBookCommerceModel.Payment" />
+          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="eBookCommerceModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserClaim" EntitySet="AspNetUserClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="eBookCommerceModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserLogin" EntitySet="AspNetUserLogins" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Basket_AspNetUsers" Association="eBookCommerceModel.FK_Basket_AspNetUsers">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Basket" EntitySet="Baskets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Book_AspNetUsers" Association="eBookCommerceModel.FK_Book_AspNetUsers">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Book" EntitySet="Books" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Basket_Book" Association="eBookCommerceModel.FK_Basket_Book">
+            <End Role="Book" EntitySet="Books" />
+            <End Role="Basket" EntitySet="Baskets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Basket_Payment" Association="eBookCommerceModel.FK_Basket_Payment">
+            <End Role="Payment" EntitySet="Payments" />
+            <End Role="Basket" EntitySet="Baskets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Book_Genre" Association="eBookCommerceModel.FK_Book_Genre">
+            <End Role="Genre" EntitySet="Genres" />
+            <End Role="Book" EntitySet="Books" />
+          </AssociationSet>
+          <AssociationSet Name="AspNetUserRoles" Association="eBookCommerceModel.AspNetUserRoles">
+            <End Role="AspNetRole" EntitySet="AspNetRoles" />
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="AspNetRole">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AspNetUsers" Relationship="Self.AspNetUserRoles" FromRole="AspNetRoles" ToRole="AspNetUsers" />
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUsers" Relationship="eBookCommerceModel.AspNetUserRoles" FromRole="AspNetRole" ToRole="AspNetUser" />
         </EntityType>
         <EntityType Name="AspNetUserClaim">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="ClaimType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ClaimValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaims" ToRole="AspNetUsers" />
+          <NavigationProperty Name="AspNetUser" Relationship="eBookCommerceModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaim" ToRole="AspNetUser" />
         </EntityType>
         <EntityType Name="AspNetUserLogin">
           <Key>
@@ -282,16 +342,16 @@
             <PropertyRef Name="ProviderKey" />
             <PropertyRef Name="UserId" />
           </Key>
-          <Property Name="LoginProvider" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ProviderKey" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogins" ToRole="AspNetUsers" />
+          <Property Name="LoginProvider" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderKey" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="eBookCommerceModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogin" ToRole="AspNetUser" />
         </EntityType>
         <EntityType Name="AspNetUser">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
           <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -302,12 +362,12 @@
           <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
           <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
           <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
-          <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
-          <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
-          <NavigationProperty Name="Baskets" Relationship="Self.FK_Basket_AspNetUsers" FromRole="AspNetUsers" ToRole="Basket" />
-          <NavigationProperty Name="Books" Relationship="Self.FK_Book_AspNetUsers" FromRole="AspNetUsers" ToRole="Book" />
-          <NavigationProperty Name="AspNetRoles" Relationship="Self.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUserClaims" Relationship="eBookCommerceModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserClaim" />
+          <NavigationProperty Name="AspNetUserLogins" Relationship="eBookCommerceModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserLogin" />
+          <NavigationProperty Name="Baskets" Relationship="eBookCommerceModel.FK_Basket_AspNetUsers" FromRole="AspNetUser" ToRole="Basket" />
+          <NavigationProperty Name="Books" Relationship="eBookCommerceModel.FK_Book_AspNetUsers" FromRole="AspNetUser" ToRole="Book" />
+          <NavigationProperty Name="AspNetRoles" Relationship="eBookCommerceModel.AspNetUserRoles" FromRole="AspNetUser" ToRole="AspNetRole" />
         </EntityType>
         <EntityType Name="Basket">
           <Key>
@@ -316,8 +376,10 @@
           <Property Name="basketId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="personId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="bookId" Type="Int32" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_Basket_AspNetUsers" FromRole="Basket" ToRole="AspNetUsers" />
-          <NavigationProperty Name="Book" Relationship="Self.FK_Basket_Book" FromRole="Basket" ToRole="Book" />
+          <Property Name="paymentId" Type="Int32" />
+          <NavigationProperty Name="AspNetUser" Relationship="eBookCommerceModel.FK_Basket_AspNetUsers" FromRole="Basket" ToRole="AspNetUser" />
+          <NavigationProperty Name="Book" Relationship="eBookCommerceModel.FK_Basket_Book" FromRole="Basket" ToRole="Book" />
+          <NavigationProperty Name="Payment" Relationship="eBookCommerceModel.FK_Basket_Payment" FromRole="Basket" ToRole="Payment" />
         </EntityType>
         <EntityType Name="Book">
           <Key>
@@ -332,53 +394,71 @@
           <Property Name="bookDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="personId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="genreId" Type="Int32" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_Book_AspNetUsers" FromRole="Book" ToRole="AspNetUsers" />
-          <NavigationProperty Name="Baskets" Relationship="Self.FK_Basket_Book" FromRole="Book" ToRole="Basket" />
-          <NavigationProperty Name="Genre" Relationship="Self.FK_Book_Genre" FromRole="Book" ToRole="Genre" />
+          <NavigationProperty Name="AspNetUser" Relationship="eBookCommerceModel.FK_Book_AspNetUsers" FromRole="Book" ToRole="AspNetUser" />
+          <NavigationProperty Name="Baskets" Relationship="eBookCommerceModel.FK_Basket_Book" FromRole="Book" ToRole="Basket" />
+          <NavigationProperty Name="Genre" Relationship="eBookCommerceModel.FK_Book_Genre" FromRole="Book" ToRole="Genre" />
         </EntityType>
         <EntityType Name="Genre">
           <Key>
             <PropertyRef Name="genreId" />
           </Key>
           <Property Name="genreId" Type="Int32" Nullable="false" />
-          <Property Name="genreName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Books" Relationship="Self.FK_Book_Genre" FromRole="Genre" ToRole="Book" />
+          <Property Name="genreName" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Books" Relationship="eBookCommerceModel.FK_Book_Genre" FromRole="Genre" ToRole="Book" />
+        </EntityType>
+        <EntityType Name="Payment">
+          <Key>
+            <PropertyRef Name="paymentId" />
+          </Key>
+          <Property Name="paymentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="paymentOrderId" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="paymentOrderNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="paymentAmount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="paymentUserName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="paymentEmail" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="paymentStatus" Type="Int32" />
+          <Property Name="paymentApprovedAmount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="paymentMaskedPan" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="paymentCardholderName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="paymentErrorCode" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="paymentErrorMessage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="paymentCreatedAt" Type="DateTime" Precision="7" />
+          <Property Name="paymentUpdatedAt" Type="DateTime" Precision="7" />
+          <NavigationProperty Name="Baskets" Relationship="eBookCommerceModel.FK_Basket_Payment" FromRole="Payment" ToRole="Basket" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
+          <End Type="eBookCommerceModel.AspNetUser" Role="AspNetUser" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="AspNetUserClaims" Type="Self.AspNetUserClaim" Multiplicity="*" />
+          <End Type="eBookCommerceModel.AspNetUserClaim" Role="AspNetUserClaim" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="AspNetUserClaims">
+            <Dependent Role="AspNetUserClaim">
               <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
+          <End Type="eBookCommerceModel.AspNetUser" Role="AspNetUser" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="AspNetUserLogins" Type="Self.AspNetUserLogin" Multiplicity="*" />
+          <End Type="eBookCommerceModel.AspNetUserLogin" Role="AspNetUserLogin" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="AspNetUserLogins">
+            <Dependent Role="AspNetUserLogin">
               <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Basket_AspNetUsers">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Basket" Type="Self.Basket" Multiplicity="*" />
+          <End Type="eBookCommerceModel.AspNetUser" Role="AspNetUser" Multiplicity="0..1" />
+          <End Type="eBookCommerceModel.Basket" Role="Basket" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Basket">
@@ -387,12 +467,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Book_AspNetUsers">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Book" Type="Self.Book" Multiplicity="*" />
+          <End Type="eBookCommerceModel.AspNetUser" Role="AspNetUser" Multiplicity="0..1" />
+          <End Type="eBookCommerceModel.Book" Role="Book" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Book">
@@ -401,8 +479,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Basket_Book">
-          <End Role="Book" Type="Self.Book" Multiplicity="0..1" />
-          <End Role="Basket" Type="Self.Basket" Multiplicity="*" />
+          <End Type="eBookCommerceModel.Book" Role="Book" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="eBookCommerceModel.Basket" Role="Basket" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Book">
               <PropertyRef Name="bookId" />
@@ -412,11 +492,23 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Book_Genre">
-          <End Role="Genre" Type="Self.Genre" Multiplicity="0..1">
+        <Association Name="FK_Basket_Payment">
+          <End Type="eBookCommerceModel.Payment" Role="Payment" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Book" Type="Self.Book" Multiplicity="*" />
+          <End Type="eBookCommerceModel.Basket" Role="Basket" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Payment">
+              <PropertyRef Name="paymentId" />
+            </Principal>
+            <Dependent Role="Basket">
+              <PropertyRef Name="paymentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Book_Genre">
+          <End Type="eBookCommerceModel.Genre" Role="Genre" Multiplicity="0..1" />
+          <End Type="eBookCommerceModel.Book" Role="Book" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Genre">
               <PropertyRef Name="genreId" />
@@ -427,146 +519,119 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="AspNetUserRoles">
-          <End Role="AspNetRoles" Type="Self.AspNetRole" Multiplicity="*" />
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="*" />
+          <End Type="eBookCommerceModel.AspNetRole" Role="AspNetRole" Multiplicity="*" />
+          <End Type="eBookCommerceModel.AspNetUser" Role="AspNetUser" Multiplicity="*" />
         </Association>
-        <EntityContainer Name="eBookCommerceEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="C__MigrationHistory" EntityType="Self.C__MigrationHistory" />
-          <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRole" />
-          <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaim" />
-          <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogin" />
-          <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUser" />
-          <EntitySet Name="Baskets" EntityType="Self.Basket" />
-          <EntitySet Name="Books" EntityType="Self.Book" />
-          <EntitySet Name="Genres" EntityType="Self.Genre" />
-          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Basket_AspNetUsers" Association="Self.FK_Basket_AspNetUsers">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="Basket" EntitySet="Baskets" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Book_AspNetUsers" Association="Self.FK_Book_AspNetUsers">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="Book" EntitySet="Books" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Basket_Book" Association="Self.FK_Basket_Book">
-            <End Role="Book" EntitySet="Books" />
-            <End Role="Basket" EntitySet="Baskets" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Book_Genre" Association="Self.FK_Book_Genre">
-            <End Role="Genre" EntitySet="Genres" />
-            <End Role="Book" EntitySet="Books" />
-          </AssociationSet>
-          <AssociationSet Name="AspNetUserRoles" Association="Self.AspNetUserRoles">
-            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-          </AssociationSet>
-        </EntityContainer>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="eBookCommerceModelStoreContainer" CdmEntityContainer="eBookCommerceEntities">
-          <EntitySetMapping Name="C__MigrationHistory">
-            <EntityTypeMapping TypeName="eBookCommerceModel.C__MigrationHistory">
-              <MappingFragment StoreEntitySet="__MigrationHistory">
-                <ScalarProperty Name="MigrationId" ColumnName="MigrationId" />
-                <ScalarProperty Name="ContextKey" ColumnName="ContextKey" />
-                <ScalarProperty Name="Model" ColumnName="Model" />
-                <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="AspNetRoles">
             <EntityTypeMapping TypeName="eBookCommerceModel.AspNetRole">
               <MappingFragment StoreEntitySet="AspNetRoles">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetUserClaims">
             <EntityTypeMapping TypeName="eBookCommerceModel.AspNetUserClaim">
               <MappingFragment StoreEntitySet="AspNetUserClaims">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
                 <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
+                <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetUserLogins">
             <EntityTypeMapping TypeName="eBookCommerceModel.AspNetUserLogin">
               <MappingFragment StoreEntitySet="AspNetUserLogins">
-                <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
-                <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
+                <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetUsers">
             <EntityTypeMapping TypeName="eBookCommerceModel.AspNetUser">
               <MappingFragment StoreEntitySet="AspNetUsers">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
-                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
-                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
-                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
-                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
-                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
-                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
-                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
-                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
+                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
+                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
+                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
+                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Baskets">
             <EntityTypeMapping TypeName="eBookCommerceModel.Basket">
               <MappingFragment StoreEntitySet="Basket">
-                <ScalarProperty Name="basketId" ColumnName="basketId" />
-                <ScalarProperty Name="personId" ColumnName="personId" />
+                <ScalarProperty Name="paymentId" ColumnName="paymentId" />
                 <ScalarProperty Name="bookId" ColumnName="bookId" />
+                <ScalarProperty Name="personId" ColumnName="personId" />
+                <ScalarProperty Name="basketId" ColumnName="basketId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Books">
             <EntityTypeMapping TypeName="eBookCommerceModel.Book">
               <MappingFragment StoreEntitySet="Book">
-                <ScalarProperty Name="bookId" ColumnName="bookId" />
-                <ScalarProperty Name="bookName" ColumnName="bookName" />
-                <ScalarProperty Name="bookAuthor" ColumnName="bookAuthor" />
-                <ScalarProperty Name="bookPages" ColumnName="bookPages" />
-                <ScalarProperty Name="bookPrice" ColumnName="bookPrice" />
-                <ScalarProperty Name="bookImageUrl" ColumnName="bookImageUrl" />
-                <ScalarProperty Name="bookDescription" ColumnName="bookDescription" />
-                <ScalarProperty Name="personId" ColumnName="personId" />
                 <ScalarProperty Name="genreId" ColumnName="genreId" />
+                <ScalarProperty Name="personId" ColumnName="personId" />
+                <ScalarProperty Name="bookDescription" ColumnName="bookDescription" />
+                <ScalarProperty Name="bookImageUrl" ColumnName="bookImageUrl" />
+                <ScalarProperty Name="bookPrice" ColumnName="bookPrice" />
+                <ScalarProperty Name="bookPages" ColumnName="bookPages" />
+                <ScalarProperty Name="bookAuthor" ColumnName="bookAuthor" />
+                <ScalarProperty Name="bookName" ColumnName="bookName" />
+                <ScalarProperty Name="bookId" ColumnName="bookId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Genres">
             <EntityTypeMapping TypeName="eBookCommerceModel.Genre">
               <MappingFragment StoreEntitySet="Genre">
-                <ScalarProperty Name="genreId" ColumnName="genreId" />
                 <ScalarProperty Name="genreName" ColumnName="genreName" />
+                <ScalarProperty Name="genreId" ColumnName="genreId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Payments">
+            <EntityTypeMapping TypeName="eBookCommerceModel.Payment">
+              <MappingFragment StoreEntitySet="Payment">
+                <ScalarProperty Name="paymentUpdatedAt" ColumnName="paymentUpdatedAt" />
+                <ScalarProperty Name="paymentCreatedAt" ColumnName="paymentCreatedAt" />
+                <ScalarProperty Name="paymentErrorMessage" ColumnName="paymentErrorMessage" />
+                <ScalarProperty Name="paymentErrorCode" ColumnName="paymentErrorCode" />
+                <ScalarProperty Name="paymentCardholderName" ColumnName="paymentCardholderName" />
+                <ScalarProperty Name="paymentMaskedPan" ColumnName="paymentMaskedPan" />
+                <ScalarProperty Name="paymentApprovedAmount" ColumnName="paymentApprovedAmount" />
+                <ScalarProperty Name="paymentStatus" ColumnName="paymentStatus" />
+                <ScalarProperty Name="paymentEmail" ColumnName="paymentEmail" />
+                <ScalarProperty Name="paymentUserName" ColumnName="paymentUserName" />
+                <ScalarProperty Name="paymentAmount" ColumnName="paymentAmount" />
+                <ScalarProperty Name="paymentOrderNumber" ColumnName="paymentOrderNumber" />
+                <ScalarProperty Name="paymentOrderId" ColumnName="paymentOrderId" />
+                <ScalarProperty Name="paymentId" ColumnName="paymentId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <AssociationSetMapping Name="AspNetUserRoles" TypeName="eBookCommerceModel.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
-            <EndProperty Name="AspNetRoles">
-              <ScalarProperty Name="Id" ColumnName="RoleId" />
-            </EndProperty>
-            <EndProperty Name="AspNetUsers">
+            <EndProperty Name="AspNetUser">
               <ScalarProperty Name="Id" ColumnName="UserId" />
+            </EndProperty>
+            <EndProperty Name="AspNetRole">
+              <ScalarProperty Name="Id" ColumnName="RoleId" />
             </EndProperty>
           </AssociationSetMapping>
         </EntityContainerMapping>

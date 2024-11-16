@@ -12,6 +12,7 @@
 
         <div class="col-md-3 text-center">
             <button type="button" class="btn btn-danger my-button" onclick="removeAllItemsFromBasket()" style="margin: 10px 5px">Remove all from Basket</button>
+            <button type="button" class="btn btn-danger my-button" onclick="proceedToPayment()" style="margin: 10px 5px">Proceed to payment</button>
         </div>
     </div>
 
@@ -50,8 +51,6 @@
                 type: "POST",
                 contentType: "application/x-www-form-urlencoded; charset=UTF-8",
                 success: function (result) {
-                    console.log(result);
-
                     if (result == true) {
                         window.location = "Basket";
                     }
@@ -69,8 +68,6 @@
                 dataType: "json",
                 contentType: "application/x-www-form-urlencoded; charset=UTF-8",
                 success: function (result) {
-                    console.log(result);
-
                     if (result == true) {
                         window.location = "Basket";
                     }
@@ -79,6 +76,25 @@
                     console.log(error);
                 }
             })
+        }
+
+        function proceedToPayment() {
+            $.ajax({
+                url: "@Url.Action("PaymentInit", "Payments")",
+                type: "GET",
+                dataType: "json",
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                success: function (result) {
+                    if (result.success) {
+                        window.location.href = result.redirectUrl;
+                    } else {
+                        toastr.error(result.message);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
         }
     </script>
 }

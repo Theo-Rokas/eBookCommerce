@@ -11,8 +11,7 @@ namespace eBookCommerce.Controllers
     public class BooksController : Controller
     {
         eBookCommerceEntities ebcDB = new eBookCommerceEntities();
-
-        // GET: Book       
+                    
         public ActionResult Index()
         {
             if (User.Identity.Name == "")
@@ -22,59 +21,6 @@ namespace eBookCommerce.Controllers
 
             eBookCommerceViewModel viewModel = new eBookCommerceViewModel(0, 0);
             return View(viewModel);
-        }
-
-        public ActionResult CreateOrEditBook(int bookId = 0)
-        {
-            eBookCommerceViewModel viewModel = new eBookCommerceViewModel(bookId, 0);
-            return PartialView("_BookFormContent", viewModel);
-        }
-
-        [HttpPost]
-        public ActionResult CreateOrEditBook(eBookCommerceViewModel model, int bookId = 0)
-        {
-            if (ModelState.IsValid)
-            {
-                var s3BookImageUrl = Helpers.S3Helper.UploadFile(model.file);
-
-                if (bookId == 0)
-                {
-                    Book book = new Book()
-                    {
-                        bookName = model.book.bookName,
-                        bookAuthor = model.book.bookAuthor,
-                        bookPages = model.book.bookPages,
-                        bookPrice = model.book.bookPrice,
-                        bookImageUrl = s3BookImageUrl,
-                        bookDescription = model.book.bookDescription,
-                        personId = model.user.Id,
-                        genreId = model.book.genreId
-                    };
-
-                    ebcDB.Books.Add(book);
-                    ebcDB.SaveChanges();                    
-                }
-                else
-                {
-                    var book = ebcDB.Books.Single(a => a.bookId == bookId);
-
-                    book.bookName = model.book.bookName;
-                    book.bookAuthor = model.book.bookAuthor;
-                    book.bookPages = model.book.bookPages;
-                    book.bookPrice = model.book.bookPrice;
-                    book.bookImageUrl = s3BookImageUrl;
-                    book.bookDescription = model.book.bookDescription;
-                    book.personId = model.user.Id;
-                    book.genreId = model.book.genreId;
-                    ebcDB.SaveChanges();                    
-                }
-
-                return Json(true);
-            }
-
-            model.genresSelectList = model.getGenreSelectList();
-
-            return PartialView("_BookFormContent", model);
         }
 
         [HttpPost]
@@ -122,6 +68,64 @@ namespace eBookCommerce.Controllers
             };
 
             return Json(json);
+        }
+
+        public ActionResult CreateOrEditBook(int bookId = 0)
+        {
+            eBookCommerceViewModel viewModel = new eBookCommerceViewModel(bookId, 0);
+            return PartialView("_BookFormContent", viewModel);
+        }
+
+        [HttpPost]
+        public ActionResult CreateOrEditBook(eBookCommerceViewModel model, int bookId = 0)
+        {
+            if (ModelState.ContainsKey("mobileBookImageFile"))
+            {
+                ModelState["mobileBookImageFile"].Errors.Clear();
+            }
+
+            if (ModelState.IsValid)
+            {
+                var s3BookImageUrl = Helpers.S3Helper.UploadFile(model.webBookImageFile);
+
+                if (bookId == 0)
+                {
+                    Book book = new Book()
+                    {
+                        bookName = model.book.bookName,
+                        bookAuthor = model.book.bookAuthor,
+                        bookPages = model.book.bookPages,
+                        bookPrice = model.book.bookPrice,
+                        bookImageUrl = s3BookImageUrl,
+                        bookDescription = model.book.bookDescription,
+                        personId = model.user.Id,
+                        genreId = model.book.genreId
+                    };
+
+                    ebcDB.Books.Add(book);
+                    ebcDB.SaveChanges();
+                }
+                else
+                {
+                    var book = ebcDB.Books.Single(a => a.bookId == bookId);
+
+                    book.bookName = model.book.bookName;
+                    book.bookAuthor = model.book.bookAuthor;
+                    book.bookPages = model.book.bookPages;
+                    book.bookPrice = model.book.bookPrice;
+                    book.bookImageUrl = s3BookImageUrl;
+                    book.bookDescription = model.book.bookDescription;
+                    book.personId = model.user.Id;
+                    book.genreId = model.book.genreId;
+                    ebcDB.SaveChanges();
+                }
+
+                return Json(true);
+            }
+
+            model.genresSelectList = model.getGenreSelectList();
+
+            return PartialView("_BookFormContent", model);
         }
 
         [HttpPost]

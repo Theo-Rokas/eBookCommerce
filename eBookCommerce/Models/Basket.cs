@@ -17,8 +17,10 @@ namespace eBookCommerce.Models
         public int basketId { get; set; }
         public string personId { get; set; }
         public Nullable<int> bookId { get; set; }
+        public Nullable<int> paymentId { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         public virtual Book Book { get; set; }
+        public virtual Payment Payment { get; set; }
     }
 }

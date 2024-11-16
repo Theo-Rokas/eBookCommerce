@@ -25,12 +25,6 @@
         @Html.ValidationMessageFor(a => a.book.bookPrice, "", new { @class = "text-danger" })
     </div>
 
-    @*<div class="mb-3">
-        @Html.LabelFor(a => a.book.bookImageUrl, new { @class = "form-label my-sub-title" })
-        @Html.TextBoxFor(a => a.book.bookImageUrl, new { @id = "bookImageUrl", @class = "form-control my-text-input", @name = "bookImageUrl" })
-        @Html.ValidationMessageFor(a => a.book.bookImageUrl, "", new { @class = "text-danger" })
-    </div>*@
-
     <div class="mb-3">
         @Html.LabelFor(a => a.book.bookDescription, new { @class = "form-label my-sub-title" })
         @Html.TextBoxFor(a => a.book.bookDescription, new { @id = "bookDescription", @class = "form-control my-text-input", @name = "bookDescription" })
@@ -44,9 +38,9 @@
     </div>
 
     <div class="mb-3">
-        @Html.LabelFor(a => a.file, new { @class = "form-label my-sub-title" })
-        @Html.TextBoxFor(a => a.file, new { @type = "file", @id = "file", @class = "form-control my-text-input", @name = "file" })
-        @Html.ValidationMessageFor(a => a.file, "", new { @class = "text-danger" })
+        @Html.LabelFor(a => a.webBookImageFile, new { @class = "form-label my-sub-title" })
+        @Html.TextBoxFor(a => a.webBookImageFile, new { @type = "file", @id = "webBookImageFile", @class = "form-control my-text-input", @name = "webBookImageFile" })
+        @Html.ValidationMessageFor(a => a.webBookImageFile, "", new { @class = "text-danger" })
     </div>
 
     @Html.HiddenFor(a => a.user.Id, new { @id = "personId", @class = "form-control", @name = "personId" })

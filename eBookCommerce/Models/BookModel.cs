@@ -30,10 +30,6 @@ namespace eBookCommerce.Models
             [Display(Name = "Book Price")]
             public Nullable<decimal> bookPrice { get; set; }
 
-            //[Required]
-            //[Display(Name = "Book Image Url")]
-            //public string bookImageUrl { get; set; }
-
             [Required]
             [Display(Name = "Book Description")]
             public string bookDescription { get; set; }

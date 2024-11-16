@@ -24,12 +24,19 @@ namespace eBookCommerce.Models
         public List<Genre> genres { get; set; }
 
         public List<SelectListItem> genresSelectList { get; set; }
-        
-        public HttpPostedFileBase file { get; set; }
+
+        [Required]
+        [Display(Name = "Book Image File")]
+        public HttpPostedFileBase webBookImageFile { get; set; }
+
+        public string email { get; set; }
+
+        [Required]
+        [Display(Name = "Book Image File")]
+        public string mobileBookImageFile { get; set; }
 
         public eBookCommerceViewModel()
         {
-
         }
 
         public eBookCommerceViewModel(int bookId = 0, int genreId = 0, int? page = null)

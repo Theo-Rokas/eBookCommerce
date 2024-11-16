@@ -71,13 +71,13 @@
 
 .target {
     cursor: pointer;
-    animation-name: rightToLeft;
+    /*animation-name: rightToLeft;
     animation-duration: 1s;
     animation-timing-function: linear;
-    animation-iteration-count: infinite;
+    animation-iteration-count: infinite;*/
 }
 
-@keyframes rightToLeft {
+/*@keyframes rightToLeft {
     0% {
         transform: translateX(0px);
     }
@@ -93,7 +93,7 @@
     100% {
         transform: translateX(0px);
     }
-}
+}*/
 
 .flip-card {
   background-color: transparent !important;

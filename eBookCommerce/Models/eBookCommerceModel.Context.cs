@@ -25,7 +25,6 @@ namespace eBookCommerce.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<C__MigrationHistory> C__MigrationHistory { get; set; }
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
@@ -33,5 +32,6 @@ namespace eBookCommerce.Models
         public virtual DbSet<Basket> Baskets { get; set; }
         public virtual DbSet<Book> Books { get; set; }
         public virtual DbSet<Genre> Genres { get; set; }
+        public virtual DbSet<Payment> Payments { get; set; }
     }
 }
