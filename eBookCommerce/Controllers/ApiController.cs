@@ -414,7 +414,7 @@ namespace eBookCommerce.Controllers
             return jsonString;
         }
 
-        private static readonly string domain = "http://192.168.1.202:44347/";
+        private static readonly string domain = "Put domain here";
         private static readonly string userName = "eBookCommerce-api";
         private static readonly string password = "ceyijX6";
 
